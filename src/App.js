@@ -1,23 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import SoilTypeList from "./components/SoilTypeList";
+import SoilMovementList from "./components/SoilMovementList";
+import SoilTypeForm from "./components/SoilTypeForm";
+import SoilMovementForm from "./components/SoilMovementForm";
 
 function App() {
+  const [soilTypes, setSoilTypes] = useState([]);
+  const [soilMovementList, setSoilMovementList] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/soil_movements")
+      .then((response) => {
+        setSoilMovementList(response.data);
+      })
+      .catch((error) => console.error("Error fetching soil movements:", error));
+  });
+
+  useEffect(() => {
+    // Fetch soil types from the API when the component mounts
+    axios
+      .get("http://localhost:3001/soil_types")
+      .then((response) => {
+        setSoilTypes(response.data);
+      })
+      .catch((error) => console.error("Error fetching soil types:", error));
+  }, []);
+
+  const handleSoilTypeAdded = (soilType) => {
+    setSoilTypes([...soilTypes, soilType]);
+  };
+
+  const handleSoilMovementAdded = (soilMovement) => {
+    setSoilMovementList([...soilMovementList, soilMovement]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <SoilTypeForm onSoilTypeAdded={handleSoilTypeAdded} />
+      <SoilTypeList soilTypes={soilTypes} />
+      <SoilMovementForm onSoilMovementAdded={handleSoilMovementAdded} />
+      <SoilMovementList soilMovementList={soilMovementList} />
     </div>
   );
 }
