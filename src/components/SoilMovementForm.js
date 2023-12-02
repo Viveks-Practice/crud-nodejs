@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./SoilMovementForm.css"; // Make sure to correctly link your CSS file
 
-const SoilMovementForm = ({ onSoilMovementAdded }) => {
+const SoilMovementForm = ({ soilTypes, onSoilMovementAdded }) => {
   const [formData, setFormData] = useState({
-    type: "",
+    soilTypeId: "",
     quantity: "",
+    sourceLocation: "",
+    destinationLocation: "",
+    date: "",
   });
   const [submitStatus, setSubmitStatus] = useState("");
-
-  const { type, quantity } = formData;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,21 +18,26 @@ const SoilMovementForm = ({ onSoilMovementAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Construct the full object including 'type' which is the name of the soil type
+    const fullFormData = {
+      ...formData,
+      type: soilTypes.find((type) => type.id.toString() === formData.soilTypeId)
+        ?.name,
+    };
 
     try {
       const response = await axios.post(
         "http://localhost:3001/soil_movements",
-        formData
+        fullFormData
       );
-
       onSoilMovementAdded(response.data);
-
-      console.log(response.data);
       setSubmitStatus("Soil movement added successfully!");
-
       setFormData({
-        type: "",
+        soilTypeId: "",
         quantity: "",
+        sourceLocation: "",
+        destinationLocation: "",
+        date: "",
       });
     } catch (error) {
       console.error(error);
@@ -39,24 +46,94 @@ const SoilMovementForm = ({ onSoilMovementAdded }) => {
   };
 
   return (
-    <div>
-      <h2>Add a Soil Movement</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="type">Type</label>
-        <input type="text" name="type" value={type} onChange={handleChange} />
-        <div />
+    <div className="soil-movement-form-container">
+      <h2 className="form-title">Add a Soil Movement</h2>
+      <form onSubmit={handleSubmit} className="soil-movement-form">
+        <div className="form-group">
+          <label htmlFor="soilTypeId" className="form-label">
+            Soil Type
+          </label>
+          <select
+            name="soilTypeId"
+            value={formData.soilTypeId}
+            onChange={handleChange}
+            required
+            className="form-control"
+          >
+            <option value="">Select Soil Type</option>
+            {soilTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <label htmlFor="quantity">Quantity</label>
-        <input
-          type="text"
-          name="quantity"
-          value={quantity}
-          onChange={handleChange}
-        />
+        <div className="form-group">
+          <label htmlFor="quantity" className="form-label">
+            Quantity
+          </label>
+          <input
+            type="text"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+            required
+            className="form-control"
+          />
+        </div>
 
-        <input type="submit" value="Add Soil Movement" />
+        <div className="form-group">
+          <label htmlFor="sourceLocation" className="form-label">
+            Source Location
+          </label>
+          <input
+            type="text"
+            name="sourceLocation"
+            value={formData.sourceLocation}
+            onChange={handleChange}
+            required
+            className="form-control"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="destinationLocation" className="form-label">
+            Destination Location
+          </label>
+          <input
+            type="text"
+            name="destinationLocation"
+            value={formData.destinationLocation}
+            onChange={handleChange}
+            required
+            className="form-control"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="date" className="form-label">
+            Date
+          </label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="form-control"
+          />
+        </div>
+
+        <div className="form-group submit-group">
+          <input
+            type="submit"
+            value="Add Soil Movement"
+            className="submit-button"
+          />
+        </div>
       </form>
-      {submitStatus && <p>{submitStatus}</p>}
+      {submitStatus && <p className="submit-status">{submitStatus}</p>}
     </div>
   );
 };

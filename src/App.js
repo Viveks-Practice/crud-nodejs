@@ -41,7 +41,10 @@ function App() {
     <div>
       <SoilTypeForm onSoilTypeAdded={handleSoilTypeAdded} />
       <SoilTypeList soilTypes={soilTypes} />
-      <SoilMovementForm onSoilMovementAdded={handleSoilMovementAdded} />
+      <SoilMovementForm
+        soilTypes={soilTypes}
+        onSoilMovementAdded={handleSoilMovementAdded}
+      />
       <SoilMovementList soilMovementList={soilMovementList} />
     </div>
   );

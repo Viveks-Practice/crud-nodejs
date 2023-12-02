@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./SoilTypeForm.css"; // Import the CSS file
 
 const SoilTypeForm = ({ onSoilTypeAdded }) => {
   const [formData, setFormData] = useState({
@@ -39,24 +40,46 @@ const SoilTypeForm = ({ onSoilTypeAdded }) => {
   };
 
   return (
-    <div>
-      <h2>Add a Soil Type</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name</label>
-        <input type="text" name="name" value={name} onChange={handleChange} />
-        <div />
+    <div className="soil-type-form-container">
+      <h2 className="form-title">Add a Soil Type</h2>
+      <form onSubmit={handleSubmit} className="soil-type-form">
+        <div className="form-group">
+          <label htmlFor="name" className="form-label">
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={name}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <label htmlFor="description">Description</label>
-        <input
-          type="text"
-          name="description"
-          value={description}
-          onChange={handleChange}
-        />
+        <div className="form-group">
+          <label htmlFor="description" className="form-label">
+            Description
+          </label>
+          <input
+            type="text"
+            name="description"
+            value={description}
+            onChange={handleChange}
+            className="form-control"
+            required
+          />
+        </div>
 
-        <input type="submit" value="Add Soil Type" />
+        <div className="form-group submit-group">
+          <input
+            type="submit"
+            value="Add Soil Type"
+            className="submit-button"
+          />
+        </div>
       </form>
-      {submitStatus && <p>{submitStatus}</p>}
+      {submitStatus && <p className="submit-status">{submitStatus}</p>}
     </div>
   );
 };
